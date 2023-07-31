@@ -1,0 +1,168 @@
+<?php
+ob_start();
+session_start();
+$fname= $_SESSION['fname'];
+define("UPLOAD_DIR", "/wamp/www/adminnew/api/uploads/");
+error_reporting(E_ERROR);
+include"connection.php";
+
+		
+
+    function GetImageExtension($imagetype)
+
+     {
+
+       if(empty($imagetype)) return false;
+
+       switch($imagetype)
+
+       {
+
+           
+
+           case 'image/jpeg': return '.jpg';
+          
+			case 'image/jpg': return '.jpg';
+
+           case 'image/png': return '.png';
+
+           default: return $b;
+
+       }
+     }
+	 
+	 
+	 
+	 
+	 
+	 
+if (!empty($_FILES["myFile"])) {
+    echo $myFile = $_FILES["myFile"];
+
+    // ensure a safe filename
+   echo $name = preg_replace("/[^A-Z0-9._-]/i", "_", $myFile["name"]);
+
+    // don't overwrite an existing file
+    $i = 0;
+    $parts = pathinfo($name);
+	$imgtype=$_FILES["myFile"]["type"];
+	 $ext= GetImageExtension($imgtype);
+	 if($ext==$b)
+	{
+		if (isset($_POST['note']) && empty($_FILES['myFile']['type']))
+		{
+			$sqll="SELECT * FROM `faculty` WHERE `fname`='$fname'";
+			$res1=mysqli_query($conn,$sqll);
+			$row=mysqli_fetch_assoc($res1);
+			$fid=$row['fid'];
+			//$cid=$_POST['cid'];
+			$path;
+			$sid=$_POST['s'];
+			$title=$_POST['title'];
+			$cid=$_POST['cid'];
+			$note=$_POST['note'];
+			$datetime = date('y/m/d h:i:s', time());
+			
+			//echo"AAA";
+			$sql="INSERT INTO `notice`(`n_id`,`fid`,`semister`,`cid`,`title`,`notise`,`remark`,`status`,`date/time`) VALUES ('','$fid','$sid','$cid','$title','$path','$note','0','$datetime')";
+			
+			$res=mysqli_query($conn,$sql);
+			if($res)
+			{
+			//header("http://localhost/adminnew/pages/addnewnotice.php");
+			echo "<table align='center'><tr><td  ><center>============================= <b>File Uploaded<b/> =============================================</center></td></tr>";
+
+			echo "<tr><td ><center>============================= <b>Do you want to upload the data <a href='addnewnotice.php'>Click Here</a> </b>========================</center></td></tr></table>";
+			}
+			
+		}
+		else{
+		echo"<h1 align='center'>Something is Wrong Please Try Again...<p>And Insert Only Images Like jpg,png...<a href='addnewnotice.php'>Click Here</a></h1>";
+		}
+		exit;
+	}
+	 
+		
+		
+		
+		
+		
+    while (file_exists(UPLOAD_DIR . $name)) {
+        $i++;
+        $name = $parts["filename"] . "-" . $i . $ext;
+    }
+
+	
+    // preserve file from temporary directory
+    $success = move_uploaded_file($myFile["tmp_name"],
+        UPLOAD_DIR . $name);
+		 //$path=UPLOAD_DIR.$name;
+		
+		 $path=$name;
+   
+	
+		
+		
+		if (isset($path) && empty($_POST['note']))
+		{
+			$sqll="SELECT * FROM `faculty` WHERE `fname`='$fname'";
+			$res1=mysqli_query($conn,$sqll);
+			$row=mysqli_fetch_assoc($res1);
+			$fid=$row['fid'];
+			//$cid=$_POST['cid'];
+			$path;
+			$sid=$_POST['s'];
+			$title=$_POST['title'];
+			$cid=$_POST['cid'];
+			$note=$_POST['note'];
+			$datetime = date('y/m/d h:i:s', time());
+			
+			//echo"BBB";
+			$sql="INSERT INTO `notice`(`n_id`,`fid`,`semister`,`cid`,`title`,`notise`,`remark`,`status`,`date/time`) VALUES ('','$fid','$sid','$cid','$title','$path','$note','1','$datetime')";
+			
+			$res=mysqli_query($conn,$sql);
+			
+		}
+		
+		
+		elseif (isset($path) && isset($_POST['note']))
+		{
+		$sqll="SELECT * FROM `faculty` WHERE `fname`='$fname'";
+		$res1=mysqli_query($conn,$sqll);
+		$row=mysqli_fetch_assoc($res1);
+		$fid=$row['fid'];
+		//$cid=$_POST['cid'];
+		$path;
+		$sid=$_POST['s'];
+		$title=$_POST['title'];
+		$cid=$_POST['cid'];
+		$note=$_POST['note'];
+		$datetime = date('y/m/d h:i:s', time());
+		//echo"CCC";
+		$sql="INSERT INTO `notice`(`n_id`,`fid`,`semister`,`cid`,`title`,`notise`,`remark`,`status`,`date/time`) VALUES ('','$fid','$sid','$cid','$title','$path','$note','2','$datetime')";
+		
+		$res=mysqli_query($conn,$sql);
+		}
+		
+		
+		else{
+			echo"<h1>Something is Wrong Please Try Again...<a href='addnewnotice.php'>Click Here</a></h1>";
+		}
+if($res)
+{
+header("http://localhost/adminnew/pages/addnewnotice.php");
+echo "<table align='center'><tr><td  ><center>============================= <b>File Uploaded<b/> =============================================</center></td></tr>";
+
+echo "<tr><td ><center>============================= <b>Do you want to upload the data <a href='addnewnotice.php'>Click Here</a> </b>========================</center></td></tr></table>";
+}
+else
+{
+	echo"<h1>Something is Wrong Please Try Again...<a href='addnewnotice.php'>Click Here</a></h1>";
+}
+	
+	
+
+    // set proper permissions on the new file
+    chmod(UPLOAD_DIR . $name, 0644);
+}
+
